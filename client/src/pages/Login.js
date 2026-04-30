@@ -8,8 +8,7 @@ function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (user) {
+    if (localStorage.getItem("token")) {
       navigate("/dashboard");
     }
   }, [navigate]);
@@ -23,31 +22,27 @@ function Login() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      alert("Login successful ✅");
       navigate("/dashboard");
-
-    } catch (err) {
-      alert("Invalid email or password ❌");
+    } catch {
+      alert("Invalid credentials");
     }
   };
 
   return (
     <div className="page auth-page">
       <div className="auth-card">
-        <h1>Welcome Back</h1>
+        <h1>Login</h1>
 
         <form onSubmit={handleLogin}>
           <input
             type="email"
             placeholder="Email"
-            value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
 
           <input
             type="password"
             placeholder="Password"
-            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
 
@@ -55,7 +50,7 @@ function Login() {
         </form>
 
         <p>
-          Don’t have an account? <Link to="/signup">Signup</Link>
+          No account? <Link to="/signup">Signup</Link>
         </p>
       </div>
     </div>
