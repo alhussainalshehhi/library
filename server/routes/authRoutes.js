@@ -5,27 +5,21 @@ const User = require("../models/User");
 
 const router = express.Router();
 
-
-// REGISTER
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // validation
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields required" });
     }
 
-    // check existing user
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // create user
     const user = new User({
       name,
       email,
@@ -41,13 +35,10 @@ router.post("/register", async (req, res) => {
   }
 });
 
-
-// LOGIN
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // find user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
@@ -59,7 +50,6 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // create token
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,

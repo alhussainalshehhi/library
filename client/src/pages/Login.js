@@ -1,47 +1,47 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import API from "../api";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await API.post("/auth/login", {
-        email,
-        password,
-      });
+      const res = await API.post("/auth/login", { email, password });
 
-      // save token
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
+      alert("Login successful ✅");
       navigate("/dashboard");
 
     } catch (err) {
-      alert("Invalid credentials");
+      alert("Invalid email or password ❌");
     }
   };
 
   return (
     <div className="page auth-page">
-
       <div className="auth-card">
         <h1>Welcome Back</h1>
-        <p className="auth-subtitle">Login to your account</p>
 
         <form onSubmit={handleLogin}>
           <input
             type="email"
-            placeholder="Email address"
+            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
           />
 
           <input
@@ -49,18 +49,15 @@ function Login() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
           />
 
           <button type="submit">Login</button>
         </form>
 
-        <p className="auth-footer">
-          Don’t have an account?{" "}
-          <Link to="/signup">Sign up</Link>
+        <p>
+          Don’t have an account? <Link to="/signup">Signup</Link>
         </p>
       </div>
-
     </div>
   );
 }
