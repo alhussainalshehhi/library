@@ -5,7 +5,7 @@ import API from "../api";
 function BookDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const [message, setMessage] = useState("");
   const [books, setBooks] = useState([]);
   const [book, setBook] = useState(null);
 
@@ -34,15 +34,14 @@ function BookDetails() {
   const handleBorrow = async () => {
     try {
       await API.post("/borrow", { bookId: book._id });
-      alert("Book borrowed successfully");
+      setMessage("Book borrowed successfully");
     } catch {
-      alert("Already borrowed");
+      setMessage("You already borrowed this book");
     }
   };
 
   return (
     <div className="page book-details">
-
       <div className="top-bar">
         <button onClick={() => navigate(-1)} className="back-btn">
           ← Back
@@ -66,7 +65,7 @@ function BookDetails() {
           </button>
         </div>
       </div>
-
+      {message && <p className="success-message">{message}</p>}
       <div className="book-navigation">
         {prevBook && (
           <button
@@ -86,7 +85,6 @@ function BookDetails() {
           </button>
         )}
       </div>
-
     </div>
   );
 }

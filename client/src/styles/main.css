@@ -429,6 +429,12 @@ section{
   transform:scale(1.05);
 }
 
+.success-msg {
+  margin-top: 10px;
+  color: #16a34a;
+  font-weight: 500;
+}
+
 .primary-btn{
   margin-top:20px;
   padding:12px 25px;

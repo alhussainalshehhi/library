@@ -1,15 +1,28 @@
-import { useContext } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BorrowContext } from "../context/BorrowContext";
+import API from "../api";
 
 function BorrowedBooks() {
-  const { borrowedBooks } = useContext(BorrowContext);
+  const [borrowed, setBorrowed] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchBorrowed = async () => {
+      try {
+        const res = await API.get("/borrow");
+        setBorrowed(res.data);
+      } catch {
+        console.log("Error loading borrowed books");
+      }
+    };
+
+    fetchBorrowed();
+  }, []);
 
   return (
     <div className="page borrowed-list">
 
-      {borrowedBooks.length === 0 ? (
+      {borrowed.length === 0 ? (
         <div className="empty-state">
           <h2>No borrowed books yet</h2>
           <p>Start exploring and borrow your first book</p>
@@ -18,16 +31,12 @@ function BorrowedBooks() {
           </button>
         </div>
       ) : (
-        borrowedBooks.map((book) => (
-          <div key={book.id} className="borrowed-item">
-            <img src={book.image} alt={book.title} />
-
+        borrowed.map((item) => (
+          <div key={item._id} className="borrowed-item">
             <div className="borrowed-info">
-              <h3>{book.title}</h3>
-              <p>{book.author}</p>
-
-              <p className="date">Borrowed: {book.borrowedAt}</p>
-              <p className="date">Return by: {book.returnDate}</p>
+              <h3>Book ID: {item.bookId}</h3>
+              <p className="date">Borrowed: {item.borrowedAt}</p>
+              <p className="date">Return: {item.returnDate}</p>
             </div>
           </div>
         ))
