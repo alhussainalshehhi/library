@@ -1,14 +1,16 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 function ProtectedRoute({ children, adminOnly }) {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const location = useLocation();
+  const storedUser = localStorage.getItem("user");
+  const user = storedUser ? JSON.parse(storedUser) : null;
 
   if (!user) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   if (adminOnly && user.role !== "admin") {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   return children;
