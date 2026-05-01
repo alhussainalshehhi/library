@@ -17,10 +17,16 @@ API.interceptors.request.use((req) => {
 API.interceptors.response.use(
   (res) => res,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.clear();
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      localStorage.getItem("token")
+    ) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
       window.location.href = "/login";
     }
+
     return Promise.reject(error);
   }
 );
