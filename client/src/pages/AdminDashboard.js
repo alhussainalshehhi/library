@@ -5,21 +5,22 @@ function AdminDashboard() {
   const [books, setBooks] = useState([]);
   const [editingId, setEditingId] = useState(null);
 
-  const [form, setForm] = useState({
+  const emptyForm = {
     title: "",
     author: "",
     category: "",
     image: "",
     description: "",
-  });
+  };
 
-  // 🔹 FETCH BOOKS
+  const [form, setForm] = useState(emptyForm);
+
   const fetchBooks = async () => {
     try {
       const res = await API.get("/books");
       setBooks(res.data);
-    } catch (err) {
-      console.log(err);
+    } catch {
+      console.log("Error fetching books");
     }
   };
 
@@ -27,58 +28,54 @@ function AdminDashboard() {
     fetchBooks();
   }, []);
 
-  // 🔹 ADD BOOK
+  const resetForm = () => {
+    setEditingId(null);
+    setForm(emptyForm);
+  };
+
   const addBook = async (e) => {
     e.preventDefault();
+
+    if (!form.title || !form.author || !form.category) return;
 
     try {
       await API.post("/books", form);
       fetchBooks();
-      setForm({
-        title: "",
-        author: "",
-        category: "",
-        image: "",
-        description: "",
-      });
-    } catch (err) {
-      console.log(err);
+      resetForm();
+    } catch {
+      console.log("Error adding book");
     }
   };
 
-  // 🔹 DELETE
   const deleteBook = async (id) => {
     try {
       await API.delete(`/books/${id}`);
       fetchBooks();
-    } catch (err) {
-      console.log(err);
+    } catch {
+      console.log("Error deleting book");
     }
   };
 
-  // 🔹 EDIT
   const handleEdit = (book) => {
     setEditingId(book._id);
-    setForm(book);
+    setForm({
+      title: book.title,
+      author: book.author,
+      category: book.category,
+      image: book.image || "",
+      description: book.description || "",
+    });
   };
 
-  // 🔹 UPDATE
   const updateBook = async (e) => {
     e.preventDefault();
 
     try {
       await API.put(`/books/${editingId}`, form);
       fetchBooks();
-      setEditingId(null);
-      setForm({
-        title: "",
-        author: "",
-        category: "",
-        image: "",
-        description: "",
-      });
-    } catch (err) {
-      console.log(err);
+      resetForm();
+    } catch {
+      console.log("Error updating book");
     }
   };
 
@@ -90,11 +87,11 @@ function AdminDashboard() {
 
       <div className="admin-container">
 
-        {/* FORM */}
         <div className="admin-form">
           <h2>{editingId ? "Edit Book" : "Add Book"}</h2>
 
           <form onSubmit={editingId ? updateBook : addBook}>
+
             <input
               placeholder="Title"
               value={form.title}
@@ -141,17 +138,27 @@ function AdminDashboard() {
             <button type="submit">
               {editingId ? "Update Book" : "Add Book"}
             </button>
+
+            {editingId && (
+              <button
+                type="button"
+                onClick={resetForm}
+                className="cancel-btn"
+              >
+                Cancel
+              </button>
+            )}
+
           </form>
         </div>
 
-        {/* BOOK LIST */}
         <div className="admin-books">
           <h2>All Books</h2>
 
           {books.map((book) => (
             <div key={book._id} className="admin-book-card">
 
-              <img src={book.image} alt={book.title} />
+              <img src={book.image} alt="" />
 
               <div className="admin-book-info">
                 <strong>{book.title}</strong>
