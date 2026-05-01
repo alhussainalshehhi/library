@@ -1,25 +1,53 @@
-import { createContext, useState, useMemo } from "react";
-import initialBooks from "../data/books";
+import { createContext, useState, useEffect, useMemo } from "react";
+import API from "../api";
 
 export const BookContext = createContext();
 
 function BookProvider({ children }) {
-  const [books, setBooks] = useState(initialBooks);
+  const [books, setBooks] = useState([]);
 
-  const addBook = (book) => {
-    setBooks((prev) => [...prev, { ...book, id: Date.now() }]);
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const res = await API.get("/books");
+        setBooks(res.data);
+      } catch {
+        console.log("Error loading books");
+      }
+    };
+
+    fetchBooks();
+  }, []);
+
+  const addBook = async (book) => {
+    try {
+      const res = await API.post("/books", book);
+      setBooks((prev) => [...prev, res.data]);
+    } catch {
+      console.log("Error adding book");
+    }
   };
 
-  const deleteBook = (id) => {
-    setBooks((prev) => prev.filter((b) => b.id !== id));
+  const deleteBook = async (id) => {
+    try {
+      await API.delete(`/books/${id}`);
+      setBooks((prev) => prev.filter((b) => b._id !== id));
+    } catch {
+      console.log("Error deleting book");
+    }
   };
 
-  const updateBook = (updatedBook) => {
-    setBooks((prev) =>
-      prev.map((b) =>
-        b.id === updatedBook.id ? updatedBook : b
-      )
-    );
+  const updateBook = async (updatedBook) => {
+    try {
+      const res = await API.put(`/books/${updatedBook._id}`, updatedBook);
+      setBooks((prev) =>
+        prev.map((b) =>
+          b._id === updatedBook._id ? res.data : b
+        )
+      );
+    } catch {
+      console.log("Error updating book");
+    }
   };
 
   const value = useMemo(() => ({
