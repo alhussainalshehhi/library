@@ -33,7 +33,7 @@ function Login() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      navigate("/dashboard");
+      window.location.href = "/dashboard"; // 🔥 force refresh navbar
     } catch {
       setError("Invalid email or password");
     } finally {
@@ -44,11 +44,9 @@ function Login() {
   return (
     <div className="page auth-page">
       <div className="auth-card">
-
         <h1>Login</h1>
 
         <form onSubmit={handleLogin}>
-
           <input
             type="email"
             placeholder="Email"
@@ -68,7 +66,6 @@ function Login() {
           <button type="submit" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
-
         </form>
 
         {error && <p className="error-msg">{error}</p>}
@@ -76,7 +73,6 @@ function Login() {
         <p>
           No account? <Link to="/signup">Signup</Link>
         </p>
-
       </div>
     </div>
   );

@@ -1,21 +1,20 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function Navbar() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    setUser(storedUser);
   }, []);
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setUser(null);
-    navigate("/");
+    navigate("/login");
   };
 
   return (
@@ -27,8 +26,9 @@ function Navbar() {
 
         {user && <Link to="/dashboard">Dashboard</Link>}
         {user && <Link to="/borrowed">My Books</Link>}
+        {user && <Link to="/contact">Contact</Link>}
 
-        {user?.role === "admin" && (
+        {user && user.role === "admin" && (
           <Link to="/admin">Admin</Link>
         )}
 
