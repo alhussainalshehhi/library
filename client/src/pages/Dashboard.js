@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import API from "../api";
 
 function Dashboard() {
   const [borrowed, setBorrowed] = useState([]);
   const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
     const fetchData = async () => {
       try {
         const booksRes = await API.get("/books");
@@ -16,13 +25,37 @@ function Dashboard() {
         setBorrowed(borrowRes.data);
       } catch {
         console.log("Error loading dashboard");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [token]);
 
   const recommended = books.slice(0, 4);
+
+  let borrowedContent;
+
+  if (!token) {
+    borrowedContent = (
+      <div className="empty-state">
+        <h2>Please login to view your dashboard</h2>
+        <button onClick={() => navigate("/login")}>Login</button>
+      </div>
+    );
+  } else if (loading) {
+    borrowedContent = <p>Loading...</p>;
+  } else if (borrowed.length === 0) {
+    borrowedContent = <p>No books borrowed yet.</p>;
+  } else {
+    borrowedContent = borrowed.map((item) => (
+      <div key={item._id} className="book-card">
+        <img src={item.bookId.image} alt="" />
+        <h3>{item.bookId.title}</h3>
+      </div>
+    ));
+  }
 
   return (
     <div className="page dashboard">
@@ -32,7 +65,7 @@ function Dashboard() {
 
       <div className="dashboard-cards">
         <div className="dashboard-card">
-          <h2>{borrowed.length}</h2>
+          <h2>{token ? borrowed.length : 0}</h2>
           <p>Books Borrowed</p>
         </div>
 
@@ -50,16 +83,7 @@ function Dashboard() {
       <h2>Your Borrowed Books</h2>
 
       <div className="books-grid">
-        {borrowed.length === 0 ? (
-          <p>No books borrowed yet.</p>
-        ) : (
-          borrowed.map((item) => (
-            <div key={item._id} className="book-card">
-              <img src={item.bookId.image} alt="" />
-              <h3>{item.bookId.title}</h3>
-            </div>
-          ))
-        )}
+        {borrowedContent}
       </div>
 
       <h2>Recommended Books</h2>
