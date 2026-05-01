@@ -40,8 +40,12 @@ function BookDetails() {
     const checkBorrowed = async () => {
       try {
         const res = await API.get("/borrow");
-        const exists = res.data.find((b) => b.bookId._id === id);
-        if (exists) setBorrowed(true);
+
+        const exists = res.data.some(
+          (b) => String(b.bookId._id) === String(id),
+        );
+
+        setBorrowed(exists);
       } catch {}
     };
 
@@ -65,19 +69,18 @@ function BookDetails() {
 
     try {
       await API.post("/borrow", { bookId: book._id });
+
+      setBorrowed(true);
       setMessage("Book borrowed successfully");
       setIsError(false);
-      setBorrowed(true);
     } catch {
       setMessage("You already borrowed this book");
       setIsError(true);
-      setBorrowed(true);
     }
   };
 
   return (
     <div className="page book-details">
-
       <div className="top-bar">
         <button onClick={() => navigate(-1)} className="back-btn">
           ← Back
@@ -105,9 +108,7 @@ function BookDetails() {
           </button>
 
           {message && (
-            <p className={isError ? "error-msg" : "success-msg"}>
-              {message}
-            </p>
+            <p className={isError ? "error-msg" : "success-msg"}>{message}</p>
           )}
         </div>
       </div>
@@ -131,7 +132,6 @@ function BookDetails() {
           </button>
         )}
       </div>
-
     </div>
   );
 }

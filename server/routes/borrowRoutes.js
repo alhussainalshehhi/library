@@ -37,9 +37,13 @@ router.post("/", authMiddleware, async (req, res) => {
 });
 
 router.get("/", authMiddleware, async (req, res) => {
-  const books = await Borrow.find({ userId: req.user.id })
-    .populate("bookId");
+  const books = await Borrow.find({ userId: req.user.id }).populate("bookId");
   res.json(books);
+});
+
+router.delete("/:id", authMiddleware, async (req, res) => {
+  await Borrow.findByIdAndDelete(req.params.id);
+  res.json({ message: "Returned" });
 });
 
 module.exports = router;
