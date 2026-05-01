@@ -5,9 +5,6 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import BookProvider from "./context/BookContext";
-import BorrowProvider from "./context/BorrowContext";
-
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -24,55 +21,51 @@ import "./styles/main.css";
 function App() {
   return (
     <Router>
-      <BookProvider>
-        <BorrowProvider>
 
-          <Navbar />
+      <Navbar />
 
-          <Routes>
+      <Routes>
 
-            <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/books" element={<Books />} />
-            <Route path="/book/:id" element={<BookDetails />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/books" element={<Books />} />
+        <Route path="/book/:id" element={<BookDetails />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
 
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
 
-            <Route
-              path="/borrowed"
-              element={
-                <ProtectedRoute>
-                  <BorrowedBooks />
-                </ProtectedRoute>
-              }
-            />
+        <Route
+          path="/borrowed"
+          element={
+            <ProtectedRoute>
+              <BorrowedBooks />
+            </ProtectedRoute>
+          }
+        />
 
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-          </Routes>
+      </Routes>
 
-          <Chatbot />
-          <Footer />
+      <Chatbot />
+      <Footer />
 
-        </BorrowProvider>
-      </BookProvider>
     </Router>
   );
 }
