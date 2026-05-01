@@ -7,10 +7,17 @@ function Contact() {
     message: "",
   });
 
+  const [status, setStatus] = useState("");
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Message sent (demo)");
+
+    setStatus("Message sent successfully!");
     setForm({ name: "", email: "", message: "" });
+
+    setTimeout(() => {
+      setStatus("");
+    }, 3000);
   };
 
   return (
@@ -21,6 +28,7 @@ function Contact() {
         <p>We’d love to hear from you</p>
 
         <form onSubmit={handleSubmit}>
+
           <input
             placeholder="Your Name"
             value={form.name}
@@ -51,7 +59,11 @@ function Contact() {
           />
 
           <button type="submit">Send Message</button>
+
         </form>
+
+        {status && <p className="success-msg">{status}</p>}
+
       </div>
 
     </div>
