@@ -9,10 +9,12 @@ function BookDetails() {
   const [books, setBooks] = useState([]);
   const [book, setBook] = useState(null);
   const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
   const [borrowed, setBorrowed] = useState(false);
 
   useEffect(() => {
     setMessage("");
+    setIsError(false);
   }, [id]);
 
   useEffect(() => {
@@ -32,6 +34,9 @@ function BookDetails() {
   }, [id]);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
     const checkBorrowed = async () => {
       try {
         const res = await API.get("/borrow");
@@ -54,21 +59,25 @@ function BookDetails() {
 
     if (!token) {
       setMessage("Please login or signup to borrow books");
+      setIsError(true);
       return;
     }
 
     try {
       await API.post("/borrow", { bookId: book._id });
       setMessage("Book borrowed successfully");
+      setIsError(false);
       setBorrowed(true);
     } catch {
       setMessage("You already borrowed this book");
+      setIsError(true);
       setBorrowed(true);
     }
   };
 
   return (
     <div className="page book-details">
+
       <div className="top-bar">
         <button onClick={() => navigate(-1)} className="back-btn">
           ← Back
@@ -95,7 +104,11 @@ function BookDetails() {
             {borrowed ? "Already Borrowed" : "Borrow Book"}
           </button>
 
-          {message && <p className="success-msg">{message}</p>}
+          {message && (
+            <p className={isError ? "error-msg" : "success-msg"}>
+              {message}
+            </p>
+          )}
         </div>
       </div>
 
@@ -118,6 +131,7 @@ function BookDetails() {
           </button>
         )}
       </div>
+
     </div>
   );
 }
