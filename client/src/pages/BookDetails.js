@@ -50,6 +50,13 @@ function BookDetails() {
   const nextBook = books[currentIndex + 1];
 
   const handleBorrow = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setMessage("Please login or signup to borrow books");
+      return;
+    }
+
     try {
       await API.post("/borrow", { bookId: book._id });
       setMessage("Book borrowed successfully");
@@ -62,7 +69,6 @@ function BookDetails() {
 
   return (
     <div className="page book-details">
-
       <div className="top-bar">
         <button onClick={() => navigate(-1)} className="back-btn">
           ← Back
@@ -112,7 +118,6 @@ function BookDetails() {
           </button>
         )}
       </div>
-
     </div>
   );
 }

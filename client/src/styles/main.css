@@ -435,6 +435,10 @@ section{
   font-weight: 500;
 }
 
+.error-msg {
+  color: #dc2626;
+}
+
 .borrow-btn:disabled {
   background: #94a3b8;
   cursor: not-allowed;
