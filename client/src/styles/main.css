@@ -212,6 +212,12 @@ section{
   transform:scale(1.05);
 }
 
+.about-page {
+  max-width: 800px;
+  margin: auto;
+  line-height: 1.7;
+}
+
 /* FEATURED */
 
 .featured{
