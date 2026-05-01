@@ -760,8 +760,8 @@ section{
 
 .admin-form input{
   width:100%;
-  padding:8px; /* ↓ smaller */
-  margin-top:8px; /* ↓ less spacing */
+  padding:8px;
+  margin-top:8px;
   border:1px solid #ddd;
   border-radius:4px;
 }
@@ -1008,6 +1008,16 @@ section{
   text-align:center;
   margin-top:40px;
   opacity:0.7;
+}
+
+.footer-logout {
+  margin-top: 10px;
+  padding: 6px 10px;
+  border: none;
+  background: #dc2626;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 .contact-page{
