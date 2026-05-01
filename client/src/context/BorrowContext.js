@@ -1,41 +1,52 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect, useMemo } from "react";
+import API from "../api";
 
 export const BorrowContext = createContext();
 
 function BorrowProvider({ children }) {
   const [borrowedBooks, setBorrowedBooks] = useState([]);
 
-  const borrowBook = (book) => {
-    setBorrowedBooks((prev) => {
-      // prevent duplicates
-      const exists = prev.find((b) => b.id === book.id);
-      if (exists) return prev;
-
-      const today = new Date();
-      const returnDate = new Date();
-      returnDate.setDate(today.getDate() + 7);
-
-      return [
-        ...prev,
-        {
-          ...book,
-          borrowedAt: today.toLocaleDateString(),
-          returnDate: returnDate.toLocaleDateString(),
-        },
-      ];
-    });
+  const fetchBorrowed = async () => {
+    try {
+      const res = await API.get("/borrow");
+      setBorrowedBooks(res.data);
+    } catch {
+      setBorrowedBooks([]);
+    }
   };
 
-  const returnBook = (id) => {
-    setBorrowedBooks((prev) =>
-      prev.filter((book) => book.id !== id)
-    );
+  useEffect(() => {
+    fetchBorrowed();
+  }, []);
+
+  const borrowBook = async (bookId) => {
+    try {
+      await API.post("/borrow", { bookId });
+      fetchBorrowed();
+      return { success: true };
+    } catch {
+      return { success: false };
+    }
   };
+
+  const returnBook = async (id) => {
+    try {
+      await API.delete(`/borrow/${id}`);
+      fetchBorrowed();
+    } catch {
+      console.log("Error returning book");
+    }
+  };
+
+  const value = useMemo(() => ({
+    borrowedBooks,
+    borrowBook,
+    returnBook,
+    refreshBorrowed: fetchBorrowed,
+  }), [borrowedBooks]);
 
   return (
-    <BorrowContext.Provider
-      value={{ borrowedBooks, borrowBook, returnBook }}
-    >
+    <BorrowContext.Provider value={value}>
       {children}
     </BorrowContext.Provider>
   );
