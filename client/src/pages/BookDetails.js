@@ -5,9 +5,15 @@ import API from "../api";
 function BookDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [message, setMessage] = useState("");
+
   const [books, setBooks] = useState([]);
   const [book, setBook] = useState(null);
+  const [message, setMessage] = useState("");
+  const [borrowed, setBorrowed] = useState(false);
+
+  useEffect(() => {
+    setMessage("");
+  }, [id]);
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -25,6 +31,18 @@ function BookDetails() {
     fetchBooks();
   }, [id]);
 
+  useEffect(() => {
+    const checkBorrowed = async () => {
+      try {
+        const res = await API.get("/borrow");
+        const exists = res.data.find((b) => b.bookId._id === id);
+        if (exists) setBorrowed(true);
+      } catch {}
+    };
+
+    checkBorrowed();
+  }, [id]);
+
   if (!book) return <h2>Loading...</h2>;
 
   const currentIndex = books.findIndex((b) => b._id === id);
@@ -35,13 +53,16 @@ function BookDetails() {
     try {
       await API.post("/borrow", { bookId: book._id });
       setMessage("Book borrowed successfully");
+      setBorrowed(true);
     } catch {
       setMessage("You already borrowed this book");
+      setBorrowed(true);
     }
   };
 
   return (
     <div className="page book-details">
+
       <div className="top-bar">
         <button onClick={() => navigate(-1)} className="back-btn">
           ← Back
@@ -60,12 +81,18 @@ function BookDetails() {
 
           <p>{book.description}</p>
 
-          <button className="borrow-btn" onClick={handleBorrow}>
-            Borrow Book
+          <button
+            className="borrow-btn"
+            onClick={handleBorrow}
+            disabled={borrowed}
+          >
+            {borrowed ? "Already Borrowed" : "Borrow Book"}
           </button>
+
+          {message && <p className="success-msg">{message}</p>}
         </div>
       </div>
-      {message && <p className="success-message">{message}</p>}
+
       <div className="book-navigation">
         {prevBook && (
           <button
@@ -85,6 +112,7 @@ function BookDetails() {
           </button>
         )}
       </div>
+
     </div>
   );
 }

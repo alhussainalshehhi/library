@@ -37,12 +37,9 @@ router.post("/", authMiddleware, async (req, res) => {
 });
 
 router.get("/", authMiddleware, async (req, res) => {
-  try {
-    const books = await Borrow.find({ userId: req.user.id });
-    res.json(books);
-  } catch {
-    res.status(500).json({ message: "Server error" });
-  }
+  const books = await Borrow.find({ userId: req.user.id })
+    .populate("bookId");
+  res.json(books);
 });
 
 module.exports = router;

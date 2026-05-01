@@ -8,12 +8,8 @@ function BorrowedBooks() {
 
   useEffect(() => {
     const fetchBorrowed = async () => {
-      try {
-        const res = await API.get("/borrow");
-        setBorrowed(res.data);
-      } catch {
-        console.log("Error loading borrowed books");
-      }
+      const res = await API.get("/borrow");
+      setBorrowed(res.data);
     };
 
     fetchBorrowed();
@@ -25,7 +21,6 @@ function BorrowedBooks() {
       {borrowed.length === 0 ? (
         <div className="empty-state">
           <h2>No borrowed books yet</h2>
-          <p>Start exploring and borrow your first book</p>
           <button onClick={() => navigate("/books")}>
             Browse Books
           </button>
@@ -33,11 +28,17 @@ function BorrowedBooks() {
       ) : (
         borrowed.map((item) => (
           <div key={item._id} className="borrowed-item">
+
+            <img src={item.bookId.image} alt="" />
+
             <div className="borrowed-info">
-              <h3>Book ID: {item.bookId}</h3>
+              <h3>{item.bookId.title}</h3>
+              <p>{item.bookId.author}</p>
+
               <p className="date">Borrowed: {item.borrowedAt}</p>
               <p className="date">Return: {item.returnDate}</p>
             </div>
+
           </div>
         ))
       )}
