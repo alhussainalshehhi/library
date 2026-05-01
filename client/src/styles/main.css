@@ -137,6 +137,21 @@ section{
   box-shadow:0 3px 10px rgba(0,0,0,0.15);
 }
 
+.nav-user {
+  margin-left: 10px;
+  font-weight: 500;
+}
+
+.logout-btn {
+  margin-left: 10px;
+  padding: 6px 10px;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
 .logo{
   font-size:22px;
   font-weight:bold;
