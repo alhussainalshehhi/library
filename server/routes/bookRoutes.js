@@ -4,7 +4,7 @@ const {
   addBook,
   updateBook,
   deleteBook,
-} = require("../controllers/bookController");
+} = require("../controllers/bookControllers");
 
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
@@ -12,8 +12,26 @@ const roleMiddleware = require("../middleware/roleMiddleware");
 const router = express.Router();
 
 router.get("/", getBooks);
-router.post("/", authMiddleware, roleMiddleware("admin"), addBook);
-router.put("/:id", authMiddleware, roleMiddleware("admin"), updateBook);
-router.delete("/:id", authMiddleware, roleMiddleware("admin"), deleteBook);
+
+router.post(
+  "/",
+  authMiddleware,
+  roleMiddleware("admin"),
+  addBook
+);
+
+router.put(
+  "/:id",
+  authMiddleware,
+  roleMiddleware("admin"),
+  updateBook
+);
+
+router.delete(
+  "/:id",
+  authMiddleware,
+  roleMiddleware("admin"),
+  deleteBook
+);
 
 module.exports = router;
