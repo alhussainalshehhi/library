@@ -7,7 +7,7 @@ function BookDetails() {
   const navigate = useNavigate();
 
   const [book, setBook] = useState(null);
-  const [books, setBooks] = useState([]); 
+  const [books, setBooks] = useState([]);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [borrowed, setBorrowed] = useState(false);
@@ -53,7 +53,7 @@ function BookDetails() {
         const res = await API.get("/borrow");
 
         const exists = res.data.some(
-          (b) => b.bookId && String(b.bookId._id) === id
+          (b) => b.bookId && String(b.bookId._id) === id,
         );
 
         setBorrowed(exists);
@@ -123,9 +123,7 @@ function BookDetails() {
           </button>
 
           {message && (
-            <p className={isError ? "error-msg" : "success-msg"}>
-              {message}
-            </p>
+            <p className={isError ? "error-msg" : "success-msg"}>{message}</p>
           )}
         </div>
       </div>
@@ -134,7 +132,7 @@ function BookDetails() {
         {prevBook && (
           <button
             className="nav-btn left"
-            onClick={() => navigate(`/book/${prevBook.id}`)}
+            onClick={() => navigate(`/book/${prevBook._id || prevBook.id}`)}
           >
             ← {prevBook.title}
           </button>
@@ -143,7 +141,7 @@ function BookDetails() {
         {nextBook && (
           <button
             className="nav-btn right"
-            onClick={() => navigate(`/book/${nextBook.id}`)}
+            onClick={() => navigate(`/book/${nextBook._id || nextBook.id}`)}
           >
             {nextBook.title} →
           </button>
