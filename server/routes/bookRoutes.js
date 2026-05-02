@@ -13,6 +13,21 @@ const router = express.Router();
 
 router.get("/", getBooks);
 
+router.get("/:id", async (req, res) => {
+  try {
+    const Book = require("../models/Book");
+    const book = await Book.findById(req.params.id);
+
+    if (!book) {
+      return res.status(404).json({ message: "Not found" });
+    }
+
+    res.json(book);
+  } catch {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 router.post(
   "/",
   authMiddleware,

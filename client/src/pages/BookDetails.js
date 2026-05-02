@@ -6,7 +6,6 @@ function BookDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [books, setBooks] = useState([]);
   const [book, setBook] = useState(null);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
@@ -18,19 +17,16 @@ function BookDetails() {
   }, [id]);
 
   useEffect(() => {
-    const fetchBooks = async () => {
+    const fetchBook = async () => {
       try {
-        const res = await API.get("/books");
-        setBooks(res.data);
-
-        const found = res.data.find((b) => b._id === id);
-        setBook(found);
+        const res = await API.get(`/books/${id}`);
+        setBook(res.data);
       } catch {
         console.log("Error fetching book");
       }
     };
 
-    fetchBooks();
+    fetchBook();
   }, [id]);
 
   useEffect(() => {
@@ -42,7 +38,7 @@ function BookDetails() {
         const res = await API.get("/borrow");
 
         const exists = res.data.some(
-          (b) => String(b.bookId._id) === String(id),
+          (b) => b.bookId && String(b.bookId._id) === id
         );
 
         setBorrowed(exists);
@@ -53,10 +49,6 @@ function BookDetails() {
   }, [id]);
 
   if (!book) return <h2>Loading...</h2>;
-
-  const currentIndex = books.findIndex((b) => b._id === id);
-  const prevBook = books[currentIndex - 1];
-  const nextBook = books[currentIndex + 1];
 
   const handleBorrow = async () => {
     const token = localStorage.getItem("token");
@@ -88,7 +80,10 @@ function BookDetails() {
       </div>
 
       <div className="book-content">
-        <img src={book.image} alt={book.title} />
+        <img
+          src={book.image || "https://via.placeholder.com/200"}
+          alt={book.title}
+        />
 
         <div className="book-info">
           <h1>{book.title}</h1>
@@ -108,29 +103,11 @@ function BookDetails() {
           </button>
 
           {message && (
-            <p className={isError ? "error-msg" : "success-msg"}>{message}</p>
+            <p className={isError ? "error-msg" : "success-msg"}>
+              {message}
+            </p>
           )}
         </div>
-      </div>
-
-      <div className="book-navigation">
-        {prevBook && (
-          <button
-            className="nav-btn left"
-            onClick={() => navigate(`/book/${prevBook._id}`)}
-          >
-            ← {prevBook.title}
-          </button>
-        )}
-
-        {nextBook && (
-          <button
-            className="nav-btn right"
-            onClick={() => navigate(`/book/${nextBook._id}`)}
-          >
-            {nextBook.title} →
-          </button>
-        )}
       </div>
     </div>
   );
