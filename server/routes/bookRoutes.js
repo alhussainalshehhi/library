@@ -4,7 +4,7 @@ const {
   addBook,
   updateBook,
   deleteBook,
-} = require("../controllers/bookControllers");
+} = require("../controllers/bookController");
 
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
