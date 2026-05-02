@@ -21,8 +21,9 @@ function BookDetails() {
       try {
         const res = await API.get(`/books/${id}`);
         setBook(res.data);
-      } catch {
-        console.log("Error fetching book");
+      } catch (err) {
+        console.log("Fetch error:", err.response?.data || err.message);
+        setBook(false);
       }
     };
 
@@ -38,7 +39,7 @@ function BookDetails() {
         const res = await API.get("/borrow");
 
         const exists = res.data.some(
-          (b) => b.bookId && String(b.bookId._id) === id
+          (b) => b.bookId && String(b.bookId._id) === id,
         );
 
         setBorrowed(exists);
@@ -48,7 +49,13 @@ function BookDetails() {
     checkBorrowed();
   }, [id]);
 
-  if (!book) return <h2>Loading...</h2>;
+  if (book === null) {
+    return <h2>Loading...</h2>;
+  }
+
+  if (book === false) {
+    return <h2>Book not found</h2>;
+  }
 
   const handleBorrow = async () => {
     const token = localStorage.getItem("token");
@@ -103,9 +110,7 @@ function BookDetails() {
           </button>
 
           {message && (
-            <p className={isError ? "error-msg" : "success-msg"}>
-              {message}
-            </p>
+            <p className={isError ? "error-msg" : "success-msg"}>{message}</p>
           )}
         </div>
       </div>
