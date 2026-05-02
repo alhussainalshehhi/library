@@ -3,7 +3,17 @@ const Book = require("../models/Book");
 exports.getBooks = async (req, res) => {
   try {
     const books = await Book.find();
-    res.json(books);
+
+    const formatted = books.map((b) => ({
+      id: b._id,
+      title: b.title,
+      author: b.author,
+      category: b.category,
+      image: b.image,
+      description: b.description,
+    }));
+
+    res.json(formatted);
   } catch {
     res.status(500).json({ message: "Server error" });
   }
@@ -20,7 +30,14 @@ exports.addBook = async (req, res) => {
     const book = new Book({ title, author, category, image, description });
     await book.save();
 
-    res.status(201).json(book);
+    res.status(201).json({
+      id: book._id,
+      title: book.title,
+      author: book.author,
+      category: book.category,
+      image: book.image,
+      description: book.description,
+    });
   } catch {
     res.status(500).json({ message: "Server error" });
   }
@@ -28,17 +45,22 @@ exports.addBook = async (req, res) => {
 
 exports.updateBook = async (req, res) => {
   try {
-    const updated = await Book.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    const updated = await Book.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
 
     if (!updated) {
       return res.status(404).json({ message: "Book not found" });
     }
 
-    res.json(updated);
+    res.json({
+      id: updated._id,
+      title: updated.title,
+      author: updated.author,
+      category: updated.category,
+      image: updated.image,
+      description: updated.description,
+    });
   } catch {
     res.status(500).json({ message: "Server error" });
   }
