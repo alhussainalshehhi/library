@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
+const connectDB = require("./db");
 const Book = require("./models/Book");
 
 const books = [
@@ -173,15 +174,19 @@ const books = [
   },
 ];
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(async () => {
-    console.log("MongoDB connected");
+const seedDB = async () => {
+  try {
+    await connectDB();
 
     await Book.deleteMany();
     await Book.insertMany(books);
 
-    console.log("ALL books inserted!");
+    console.log("Books seeded successfully");
     process.exit();
-  })
-  .catch((err) => console.log(err));
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
+};
+
+seedDB();
