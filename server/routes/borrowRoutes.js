@@ -24,26 +24,47 @@ router.post("/", authMiddleware, async (req, res) => {
     const borrow = new Borrow({
       userId: req.user.id,
       bookId,
-      borrowedAt: today.toLocaleDateString("en-GB"),
-      returnDate: returnDate.toLocaleDateString("en-GB"),
+      borrowedAt: today,
+      returnDate: returnDate,
     });
 
     await borrow.save();
 
-    res.status(201).json(borrow);
+    const populated = await borrow.populate("bookId");
+
+    res.status(201).json(populated);
   } catch {
     res.status(500).json({ message: "Server error" });
   }
 });
 
 router.get("/", authMiddleware, async (req, res) => {
-  const books = await Borrow.find({ userId: req.user.id }).populate("bookId");
-  res.json(books);
+  try {
+    const borrows = await Borrow.find({ userId: req.user.id }).populate("bookId");
+
+    res.json(borrows);
+  } catch {
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 router.delete("/:id", authMiddleware, async (req, res) => {
-  await Borrow.findByIdAndDelete(req.params.id);
-  res.json({ message: "Returned" });
+  try {
+    const borrow = await Borrow.findOne({
+      _id: req.params.id,
+      userId: req.user.id,
+    });
+
+    if (!borrow) {
+      return res.status(404).json({ message: "Not found" });
+    }
+
+    await Borrow.findByIdAndDelete(req.params.id);
+
+    res.json({ message: "Returned successfully" });
+  } catch {
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 module.exports = router;
