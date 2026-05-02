@@ -10,6 +10,8 @@ const borrowRoutes = require("./routes/borrowRoutes");
 
 const app = express();
 
+connectDB();
+
 app.use(cors());
 app.use(express.json());
 
@@ -20,8 +22,6 @@ app.use("/api/borrow", borrowRoutes);
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
-
-connectDB();
 
 const PORT = process.env.PORT || 5000;
 
