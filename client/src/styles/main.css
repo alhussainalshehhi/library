@@ -885,8 +885,13 @@ section{
 }
 
 .admin-form textarea {
-  min-height: 100px;
+  width: 100%;
+  padding: 8px;
+  margin-top: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   resize: vertical;
+  min-height: 100px;
 }
 
 .category{
