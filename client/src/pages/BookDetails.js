@@ -7,6 +7,7 @@ function BookDetails() {
   const navigate = useNavigate();
 
   const [book, setBook] = useState(null);
+  const [books, setBooks] = useState([]); 
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [borrowed, setBorrowed] = useState(false);
@@ -31,6 +32,19 @@ function BookDetails() {
   }, [id]);
 
   useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const res = await API.get("/books");
+        setBooks(res.data);
+      } catch {
+        console.log("Error fetching books");
+      }
+    };
+
+    fetchBooks();
+  }, []);
+
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
@@ -39,7 +53,7 @@ function BookDetails() {
         const res = await API.get("/borrow");
 
         const exists = res.data.some(
-          (b) => b.bookId && String(b.bookId._id) === id,
+          (b) => b.bookId && String(b.bookId._id) === id
         );
 
         setBorrowed(exists);
@@ -49,13 +63,12 @@ function BookDetails() {
     checkBorrowed();
   }, [id]);
 
-  if (book === null) {
-    return <h2>Loading...</h2>;
-  }
+  if (book === null) return <h2>Loading...</h2>;
+  if (book === false) return <h2>Book not found</h2>;
 
-  if (book === false) {
-    return <h2>Book not found</h2>;
-  }
+  const currentIndex = books.findIndex((b) => b.id === id);
+  const prevBook = books[currentIndex - 1];
+  const nextBook = books[currentIndex + 1];
 
   const handleBorrow = async () => {
     const token = localStorage.getItem("token");
@@ -110,9 +123,31 @@ function BookDetails() {
           </button>
 
           {message && (
-            <p className={isError ? "error-msg" : "success-msg"}>{message}</p>
+            <p className={isError ? "error-msg" : "success-msg"}>
+              {message}
+            </p>
           )}
         </div>
+      </div>
+
+      <div className="book-navigation">
+        {prevBook && (
+          <button
+            className="nav-btn left"
+            onClick={() => navigate(`/book/${prevBook.id}`)}
+          >
+            ← {prevBook.title}
+          </button>
+        )}
+
+        {nextBook && (
+          <button
+            className="nav-btn right"
+            onClick={() => navigate(`/book/${nextBook.id}`)}
+          >
+            {nextBook.title} →
+          </button>
+        )}
       </div>
     </div>
   );
