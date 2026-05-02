@@ -1,20 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 
 function Navbar() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    setUser(storedUser);
-  }, []);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    setUser(null);
-    navigate("/login");
+    navigate("/");
+    window.location.reload();
   };
 
   return (
@@ -22,11 +16,12 @@ function Navbar() {
       <Link to="/" className="logo">Library</Link>
 
       <div className="nav-links">
+        <Link to="/">Home</Link>
         <Link to="/books">Books</Link>
+        <Link to="/contact">Contact</Link>
 
         {user && <Link to="/dashboard">Dashboard</Link>}
         {user && <Link to="/borrowed">My Books</Link>}
-        {user && <Link to="/contact">Contact</Link>}
 
         {user && user.role === "admin" && (
           <Link to="/admin">Admin</Link>
