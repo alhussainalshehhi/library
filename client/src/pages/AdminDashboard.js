@@ -81,50 +81,39 @@ function AdminDashboard() {
 
   return (
     <div className="page admin-page">
-
       <h1 className="admin-title">Admin Dashboard</h1>
       <p className="admin-subtitle">Manage books in the system</p>
 
       <div className="admin-container">
-
         <div className="admin-form">
           <h2>{editingId ? "Edit Book" : "Add Book"}</h2>
 
           <form onSubmit={editingId ? updateBook : addBook}>
-
             <input
               placeholder="Title"
               value={form.title}
-              onChange={(e) =>
-                setForm({ ...form, title: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
               required
             />
 
             <input
               placeholder="Author"
               value={form.author}
-              onChange={(e) =>
-                setForm({ ...form, author: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, author: e.target.value })}
               required
             />
 
             <input
               placeholder="Category"
               value={form.category}
-              onChange={(e) =>
-                setForm({ ...form, category: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, category: e.target.value })}
               required
             />
 
             <input
               placeholder="Image URL"
               value={form.image}
-              onChange={(e) =>
-                setForm({ ...form, image: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, image: e.target.value })}
             />
 
             <textarea
@@ -140,15 +129,10 @@ function AdminDashboard() {
             </button>
 
             {editingId && (
-              <button
-                type="button"
-                onClick={resetForm}
-                className="cancel-btn"
-              >
+              <button type="button" onClick={resetForm} className="cancel-btn">
                 Cancel
               </button>
             )}
-
           </form>
         </div>
 
@@ -157,7 +141,6 @@ function AdminDashboard() {
 
           {books.map((book) => (
             <div key={book._id} className="admin-book-card">
-
               <img src={book.image} alt="" />
 
               <div className="admin-book-info">
@@ -167,9 +150,7 @@ function AdminDashboard() {
               </div>
 
               <div className="admin-actions">
-                <button onClick={() => handleEdit(book)}>
-                  Edit
-                </button>
+                <button onClick={() => handleEdit(book)}>Edit</button>
 
                 <button
                   className="delete-btn"
@@ -178,14 +159,10 @@ function AdminDashboard() {
                   Delete
                 </button>
               </div>
-
             </div>
           ))}
-
         </div>
-
       </div>
-
     </div>
   );
 }
