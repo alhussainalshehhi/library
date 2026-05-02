@@ -1,13 +1,28 @@
 const mongoose = require("mongoose");
 
-const borrowSchema = new mongoose.Schema({
-  userId: String,
-  bookId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Book",
+const borrowSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    bookId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Book",
+      required: true,
+    },
+    borrowedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    returnDate: {
+      type: Date,
+    },
   },
-  borrowedAt: String,
-  returnDate: String,
-});
+  { timestamps: true }
+);
+
+borrowSchema.index({ userId: 1, bookId: 1 }, { unique: true });
 
 module.exports = mongoose.model("Borrow", borrowSchema);
