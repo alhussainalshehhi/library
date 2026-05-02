@@ -5,7 +5,7 @@ exports.getBooks = async (req, res) => {
     const books = await Book.find();
 
     const formatted = books.map((b) => ({
-      id: b._id,
+      _id: b._id,
       title: b.title,
       author: b.author,
       category: b.category,
@@ -31,7 +31,7 @@ exports.addBook = async (req, res) => {
     await book.save();
 
     res.status(201).json({
-      id: book._id,
+      _id: book._id,
       title: book.title,
       author: book.author,
       category: book.category,
@@ -54,7 +54,7 @@ exports.updateBook = async (req, res) => {
     }
 
     res.json({
-      id: updated._id,
+      _id: updated._id,
       title: updated.title,
       author: updated.author,
       category: updated.category,
