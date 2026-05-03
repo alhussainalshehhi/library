@@ -28,7 +28,7 @@ function BookDetails() {
       }
     };
 
-    fetchBook();
+    if (id) fetchBook();
   }, [id]);
 
   useEffect(() => {
@@ -53,7 +53,7 @@ function BookDetails() {
         const res = await API.get("/borrow");
 
         const exists = res.data.some(
-          (b) => b.bookId && String(b.bookId._id) === id,
+          (b) => b.bookId && String(b.bookId._id) === String(id)
         );
 
         setBorrowed(exists);
@@ -66,9 +66,17 @@ function BookDetails() {
   if (book === null) return <h2>Loading...</h2>;
   if (book === false) return <h2>Book not found</h2>;
 
-  const currentIndex = books.findIndex((b) => b.id === id);
-  const prevBook = books[currentIndex - 1];
-  const nextBook = books[currentIndex + 1];
+  const currentIndex = books.findIndex(
+    (b) => String(b._id) === String(id)
+  );
+
+  const prevBook =
+    currentIndex > 0 ? books[currentIndex - 1] : null;
+
+  const nextBook =
+    currentIndex !== -1 && currentIndex < books.length - 1
+      ? books[currentIndex + 1]
+      : null;
 
   const handleBorrow = async () => {
     const token = localStorage.getItem("token");
@@ -123,7 +131,9 @@ function BookDetails() {
           </button>
 
           {message && (
-            <p className={isError ? "error-msg" : "success-msg"}>{message}</p>
+            <p className={isError ? "error-msg" : "success-msg"}>
+              {message}
+            </p>
           )}
         </div>
       </div>
@@ -132,7 +142,7 @@ function BookDetails() {
         {prevBook && (
           <button
             className="nav-btn left"
-            onClick={() => navigate(`/book/${prevBook._id || prevBook.id}`)}
+            onClick={() => navigate(`/book/${prevBook._id}`)}
           >
             ← {prevBook.title}
           </button>
@@ -141,7 +151,7 @@ function BookDetails() {
         {nextBook && (
           <button
             className="nav-btn right"
-            onClick={() => navigate(`/book/${nextBook._id || nextBook.id}`)}
+            onClick={() => navigate(`/book/${nextBook._id}`)}
           >
             {nextBook.title} →
           </button>
