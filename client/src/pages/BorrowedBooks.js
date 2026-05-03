@@ -7,6 +7,11 @@ function BorrowedBooks() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const formatDate = (date) => {
+    if (!date) return "";
+    return new Date(date).toLocaleDateString("en-GB");
+  };
+
   const fetchBorrowed = async () => {
     try {
       const res = await API.get("/borrow");
@@ -65,15 +70,18 @@ function BorrowedBooks() {
   } else {
     content = borrowed.map((item) => (
       <div key={item._id} className="borrowed-item">
-
-        <img src={item.bookId.image} alt="" />
+        <img src={item.bookId.image} alt={item.bookId.title} />
 
         <div className="borrowed-info">
           <h3>{item.bookId.title}</h3>
           <p>{item.bookId.author}</p>
 
-          <p className="date">Borrowed: {item.borrowedAt}</p>
-          <p className="date">Return: {item.returnDate}</p>
+          <p className="date">
+            Borrowed: {formatDate(item.borrowedAt)}
+          </p>
+          <p className="date">
+            Return: {formatDate(item.returnDate)}
+          </p>
         </div>
 
         <button
@@ -82,13 +90,12 @@ function BorrowedBooks() {
         >
           Return
         </button>
-
       </div>
     ));
   }
 
   return (
-    <div className="page borrowed-list">
+    <div className="page borrowed-page">
       <h1>My Books</h1>
       {content}
     </div>
